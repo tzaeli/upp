@@ -25,7 +25,8 @@ setuptools.setup(
     python_requires='>=3.6, <4',
     install_requires=[
         'click',
-        'setuptools'
+        'setuptools',
+        'python-registry'
     ],
     entry_points={
         'console_scripts': [

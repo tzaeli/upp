@@ -195,6 +195,33 @@ def dump(ctx, raw):
     return 0
 
 
+@click.command(short_help='Dumps all PowerPlay parameters from a Windows install to a bytestring.')
+@click.option('-v', '--windows-volume', required=True, metavar='<volumepath>',
+              help='Volume containing a Windows install.')
+@click.pass_context
+def dumphex(ctx, windows_volume):
+    """Dumps all PowerPlay data to console
+
+    De-serializes PowerPlay binary data into hex bytes suitable for OpenCore configurations.
+    For example:
+
+    \b
+        upp dumphex -v /Volumes/Windows
+
+    This will read the registry at /Volumes/Windows/Windows/System32/config/SYSTEM and print out
+    the PowerPlay table to the console as a bytestring.
+    """
+    pp_file = _get_pp_data_from_registry(windows_volume + '/Windows/System32/config/SYSTEM')
+
+    f = open(pp_file, 'rb')
+    raw_data = f.read()
+    f.close()
+
+    print('PP_PhmSoftPowerPlayTable: %s' % bytearray(raw_data).hex())
+
+    return 0
+
+
 @click.command(short_help='Extract PowerPlay table from Video BIOS ROM image.')
 @click.option('-r', '--video-rom', required=True, metavar='<filename>',
               help='Input Video ROM binary image file.')
@@ -367,6 +394,7 @@ cli.add_command(dump)
 cli.add_command(get)
 cli.add_command(set)
 cli.add_command(version)
+cli.add_command(dumphex)
 
 
 def main():
